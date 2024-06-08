@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "132521012360",
+    "project_id": "echo-40d4d",
+    "storage_bucket": "echo-40d4d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132521012360:android:ec6f4f5ba1b7d0b27ec33d",
+        "android_client_info": {
+          "package_name": "com.example.echo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhzDEI6B2B2ovB_MqpNqI5i8QhWzTpbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
