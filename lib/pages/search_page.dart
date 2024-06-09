@@ -14,10 +14,10 @@ import '../pages/conversation_page.dart';
 import '../models/contact.dart';
 
 class SearchPage extends StatefulWidget {
-  late double _height;
-  late double _width;
+  late final double _height;
+  late final double _width;
 
-  SearchPage(this._height, this._width);
+  const SearchPage(this._height, this._width, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -46,8 +46,8 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _searchPageUI() {
     return Builder(
-      builder: (BuildContext _context) {
-        _auth = Provider.of<AuthProvider>(_context);
+      builder: (BuildContext context) {
+        _auth = Provider.of<AuthProvider>(context);
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
@@ -63,18 +63,18 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _userSearchField() {
     return Container(
-      height: this.widget._height * 0.08,
-      width: this.widget._width,
-      padding: EdgeInsets.symmetric(vertical: this.widget._height * 0.02),
+      height: widget._height * 0.08,
+      width: widget._width,
+      padding: EdgeInsets.symmetric(vertical: widget._height * 0.02),
       child: TextField(
         autocorrect: false,
-        style: TextStyle(color: Colors.white),
-        onSubmitted: (_input) {
+        style: const TextStyle(color: Colors.white),
+        onSubmitted: (input) {
           setState(() {
-            _searchText = _input;
+            _searchText = input;
           });
         },
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           prefixIcon: Icon(
             Icons.search,
             color: Colors.white,
@@ -90,42 +90,42 @@ class _SearchPageState extends State<SearchPage> {
   Widget _usersListView() {
     return StreamBuilder<List<Contact>>(
       stream: DBService.instance.getUsersInDB(_searchText),
-      builder: (_context, _snapshot) {
-        var _usersData = _snapshot.data;
-        if (_usersData != null) {
-          _usersData.removeWhere((_contact) => _contact.id == _auth.user.uid);
+      builder: (context, snapshot) {
+        var usersData = snapshot.data;
+        if (usersData != null) {
+          usersData.removeWhere((contact) => contact.id == _auth.user.uid);
         }
-        return _snapshot.hasData
-            ? Container(
-                height: this.widget._height * 0.75,
+        return snapshot.hasData
+            ? SizedBox(
+                height: widget._height * 0.75,
                 child: ListView.builder(
-                  itemCount: _usersData.length,
-                  itemBuilder: (BuildContext _context, int _index) {
-                    var _userData = _usersData[_index];
-                    var _currentTime = DateTime.now();
-                    var _recepientID = _usersData[_index].id;
-                    var _isUserActive = !_userData.lastseen.toDate().isBefore(
-                          _currentTime.subtract(
-                            Duration(hours: 1),
+                  itemCount: usersData.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    var userData = usersData[index];
+                    var currentTime = DateTime.now();
+                    var recepientID = usersData[index].id;
+                    var isUserActive = !userData.lastseen.toDate().isBefore(
+                          currentTime.subtract(
+                            const Duration(hours: 1),
                           ),
                         );
                     return ListTile(
                       onTap: () {
                         DBService.instance.createOrGetConversartion(
-                            _auth.user.uid, _recepientID,
-                            (String _conversationID) {
+                            _auth.user.uid, recepientID,
+                            (String conversationID) {
                           NavigationService.instance.navigateToRoute(
-                            MaterialPageRoute(builder: (_context) {
+                            MaterialPageRoute(builder: (context) {
                               return ConversationPage(
-                                  _conversationID,
-                                  _recepientID,
-                                  _userData.name,
-                                  _userData.image);
+                                  conversationID,
+                                  recepientID,
+                                  userData.name,
+                                  userData.image);
                             }),
                           );
                         });
                       },
-                      title: Text(_userData.name),
+                      title: Text(userData.name),
                       leading: Container(
                         width: 50,
                         height: 50,
@@ -133,7 +133,7 @@ class _SearchPageState extends State<SearchPage> {
                           borderRadius: BorderRadius.circular(100),
                           image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(_userData.image),
+                            image: NetworkImage(userData.image),
                           ),
                         ),
                       ),
@@ -142,16 +142,16 @@ class _SearchPageState extends State<SearchPage> {
                         mainAxisSize: MainAxisSize.max,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          _isUserActive
-                              ? Text(
+                          isUserActive
+                              ? const Text(
                                   "Active Now",
                                   style: TextStyle(fontSize: 15),
                                 )
-                              : Text(
+                              : const Text(
                                   "Last Seen",
                                   style: TextStyle(fontSize: 15),
                                 ),
-                          _isUserActive
+                          isUserActive
                               ? Container(
                                   height: 10,
                                   width: 10,
@@ -162,9 +162,9 @@ class _SearchPageState extends State<SearchPage> {
                                 )
                               : Text(
                                   timeago.format(
-                                    _userData.lastseen.toDate(),
+                                    userData.lastseen.toDate(),
                                   ),
-                                  style: TextStyle(fontSize: 15),
+                                  style: const TextStyle(fontSize: 15),
                                 ),
                         ],
                       ),
@@ -172,7 +172,7 @@ class _SearchPageState extends State<SearchPage> {
                   },
                 ),
               )
-            : SpinKitWanderingCubes(
+            : const SpinKitWanderingCubes(
                 color: Colors.blue,
                 size: 50.0,
               );

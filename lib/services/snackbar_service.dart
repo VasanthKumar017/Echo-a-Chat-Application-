@@ -5,20 +5,20 @@ class SnackBarService {
 
   static SnackBarService instance = SnackBarService();
 
-  SnackBarService() {}
+  SnackBarService();
 
-  set buildContext(BuildContext _context) {
-    _buildContext = _context;
+  set buildContext(BuildContext context) {
+    _buildContext = context;
   }
 
-  void showSnackBarError(String _message) {
+  void showSnackBarError(String message) {
     if (_buildContext != null) {
       ScaffoldMessenger.of(_buildContext!).showSnackBar(
         SnackBar(
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
           content: Text(
-            _message,
-            style: TextStyle(color: Colors.white, fontSize: 15),
+            message,
+            style: const TextStyle(color: Colors.white, fontSize: 15),
           ),
           backgroundColor: Colors.red,
         ),
@@ -28,14 +28,14 @@ class SnackBarService {
     }
   }
 
-  void showSnackBarSuccess(String _message) {
+  void showSnackBarSuccess(String message) {
     if (_buildContext != null) {
       ScaffoldMessenger.of(_buildContext!).showSnackBar(
         SnackBar(
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
           content: Text(
-            _message,
-            style: TextStyle(color: Colors.white, fontSize: 15),
+            message,
+            style: const TextStyle(color: Colors.white, fontSize: 15),
           ),
           backgroundColor: Colors.green,
         ),

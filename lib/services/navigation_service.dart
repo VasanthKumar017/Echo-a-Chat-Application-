@@ -9,16 +9,16 @@ class NavigationService {
     navigatorKey = GlobalKey<NavigatorState>();
   }
 
-  Future<dynamic> navigateToReplacement(String _routeName) async {
-    return await navigatorKey.currentState!.pushReplacementNamed(_routeName);
+  Future<dynamic> navigateToReplacement(String routeName) async {
+    return await navigatorKey.currentState!.pushReplacementNamed(routeName);
   }
 
-  Future<dynamic> navigateTo(String _routeName) async {
-    return await navigatorKey.currentState!.pushNamed(_routeName);
+  Future<dynamic> navigateTo(String routeName) async {
+    return await navigatorKey.currentState!.pushNamed(routeName);
   }
 
-  Future<dynamic> navigateToRoute(MaterialPageRoute _route) async {
-    return await navigatorKey.currentState!.push(_route);
+  Future<dynamic> navigateToRoute(MaterialPageRoute route) async {
+    return await navigatorKey.currentState!.push(route);
   }
 
   void goBack() {

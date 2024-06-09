@@ -5,6 +5,8 @@ import './recent_conversations_page.dart';
 import './search_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _HomePageState();
@@ -83,7 +85,7 @@ void main() {
         ),
         scaffoldBackgroundColor: const Color.fromRGBO(28, 27, 27, 1),
       ),
-      home: HomePage(),
+      home: const HomePage(),
     ),
   );
 }

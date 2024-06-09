@@ -58,7 +58,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void registerUserWithEmailAndPassword(
-      String email, String password, Future<void> onSuccess(String uid)) async {
+      String email, String password, Future<void> Function(String uid) onSuccess) async {
     status = AuthStatus.authenticating;
     notifyListeners();
     try {
@@ -79,7 +79,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void logoutUser(Future<void> onSuccess()) async {
+  void logoutUser(Future<void> Function() onSuccess) async {
     try {
       await _auth.signOut();
       user = null;

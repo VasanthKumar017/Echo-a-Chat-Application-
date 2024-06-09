@@ -7,20 +7,20 @@ import '../models/message.dart';
 class DBService {
   static DBService instance = DBService();
 
-  FirebaseFirestore _db;
+  final FirebaseFirestore _db;
 
   DBService() : _db = FirebaseFirestore.instance;
 
-  String _userCollection = "Users";
-  String _conversationsCollection = "Conversations";
+  final String _userCollection = "Users";
+  final String _conversationsCollection = "Conversations";
 
   Future<void> createUserInDB(
-      String _uid, String _name, String _email, String _imageURL) async {
+      String uid, String name, String email, String imageURL) async {
     try {
-      await _db.collection(_userCollection).doc(_uid).set({
-        "name": _name,
-        "email": _email,
-        "image": _imageURL,
+      await _db.collection(_userCollection).doc(uid).set({
+        "name": name,
+        "email": email,
+        "image": imageURL,
         "lastSeen": FieldValue.serverTimestamp(),
       });
     } catch (e) {
@@ -29,27 +29,27 @@ class DBService {
     }
   }
 
-  Future<void> updateUserLastSeenTime(String _userID) async {
-    var _ref = _db.collection(_userCollection).doc(_userID);
+  Future<void> updateUserLastSeenTime(String userID) async {
+    var ref = _db.collection(_userCollection).doc(userID);
     try {
-      await _ref.update({"lastSeen": FieldValue.serverTimestamp()});
+      await ref.update({"lastSeen": FieldValue.serverTimestamp()});
     } catch (e) {
       print(e);
       rethrow; // Re-throw the error for higher-level handling
     }
   }
 
-  Future<void> sendMessage(String _conversationID, Message _message) async {
-    var _ref = _db.collection(_conversationsCollection).doc(_conversationID);
-    var _messageType = _message.type == MessageType.Text ? "text" : "image";
+  Future<void> sendMessage(String conversationID, Message message) async {
+    var ref = _db.collection(_conversationsCollection).doc(conversationID);
+    var messageType = message.type == MessageType.Text ? "text" : "image";
     try {
-      await _ref.update({
+      await ref.update({
         "messages": FieldValue.arrayUnion([
           {
-            "message": _message.content,
-            "senderID": _message.senderID,
+            "message": message.content,
+            "senderID": message.senderID,
             "timestamp": FieldValue.serverTimestamp(),
-            "type": _messageType,
+            "type": messageType,
           },
         ]),
       });
@@ -59,27 +59,27 @@ class DBService {
     }
   }
 
-  Future<void> createOrGetConversation(String _currentID, String _recepientID,
-      Future<void> _onSuccess(String _conversationID)) async {
-    var _ref = _db.collection(_conversationsCollection);
-    var _userConversationRef = _db
+  Future<void> createOrGetConversation(String currentID, String recepientID,
+      Future<void> Function(String conversationID) onSuccess) async {
+    var ref = _db.collection(_conversationsCollection);
+    var userConversationRef = _db
         .collection(_userCollection)
-        .doc(_currentID)
+        .doc(currentID)
         .collection(_conversationsCollection);
     try {
-      var conversation = await _userConversationRef.doc(_recepientID).get();
+      var conversation = await userConversationRef.doc(recepientID).get();
       if (conversation.exists) {
-        return _onSuccess(conversation.data()!["conversationID"]);
+        return onSuccess(conversation.data()!["conversationID"]);
       } else {
-        var _conversationRef = _ref.doc();
-        await _conversationRef.set(
+        var conversationRef = ref.doc();
+        await conversationRef.set(
           {
-            "members": [_currentID, _recepientID],
-            "ownerID": _currentID,
+            "members": [currentID, recepientID],
+            "ownerID": currentID,
             'messages': [],
           },
         );
-        return _onSuccess(_conversationRef.id);
+        return onSuccess(conversationRef.id);
       }
     } catch (e) {
       print(e);
@@ -87,43 +87,43 @@ class DBService {
     }
   }
 
-  Stream<Contact> getUserData(String _userID) {
-    var _ref = _db.collection(_userCollection).doc(_userID);
-    return _ref.snapshots().map((_snapshot) {
-      return Contact.fromFirestore(_snapshot);
+  Stream<Contact> getUserData(String userID) {
+    var ref = _db.collection(_userCollection).doc(userID);
+    return ref.snapshots().map((snapshot) {
+      return Contact.fromFirestore(snapshot);
     });
   }
 
-  Stream<List<ConversationSnippet>> getUserConversations(String _userID) {
-    var _ref = _db
+  Stream<List<ConversationSnippet>> getUserConversations(String userID) {
+    var ref = _db
         .collection(_userCollection)
-        .doc(_userID)
+        .doc(userID)
         .collection(_conversationsCollection);
-    return _ref.snapshots().map((_snapshot) {
-      return _snapshot.docs.map((_doc) {
-        return ConversationSnippet.fromFirestore(_doc);
+    return ref.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return ConversationSnippet.fromFirestore(doc);
       }).toList();
     });
   }
 
-  Stream<List<Contact>> getUsersInDB(String _searchName) {
-    var _ref = _db
+  Stream<List<Contact>> getUsersInDB(String searchName) {
+    var ref = _db
         .collection(_userCollection)
-        .where("name", isGreaterThanOrEqualTo: _searchName)
-        .where("name", isLessThan: _searchName + 'z');
-    return _ref.snapshots().map((_snapshot) {
-      return _snapshot.docs.map((_doc) {
-        return Contact.fromFirestore(_doc);
+        .where("name", isGreaterThanOrEqualTo: searchName)
+        .where("name", isLessThan: '${searchName}z');
+    return ref.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Contact.fromFirestore(doc);
       }).toList();
     });
   }
 
-  Stream<Conversation> getConversation(String _conversationID) {
-    var _ref =
-        _db.collection(_conversationsCollection).doc(_conversationID);
-    return _ref.snapshots().map(
-      (_doc) {
-        return Conversation.fromFirestore(_doc);
+  Stream<Conversation> getConversation(String conversationID) {
+    var ref =
+        _db.collection(_conversationsCollection).doc(conversationID);
+    return ref.snapshots().map(
+      (doc) {
+        return Conversation.fromFirestore(doc);
       },
     );
   }

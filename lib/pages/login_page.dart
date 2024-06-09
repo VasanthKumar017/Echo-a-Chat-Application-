@@ -42,9 +42,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _loginPageUI() {
     return Builder(
-      builder: (BuildContext _context) {
-        SnackBarService.instance.buildContext = _context;
-        _auth = Provider.of<AuthProvider>(_context);
+      builder: (BuildContext context) {
+        SnackBarService.instance.buildContext = context;
+        _auth = Provider.of<AuthProvider>(context);
         return Container(
           height: _deviceHeight * 0.60,
           padding: EdgeInsets.symmetric(horizontal: _deviceWidth * 0.10),
@@ -137,14 +137,14 @@ class _LoginPageState extends State<LoginPage> {
       autocorrect: false,
       obscureText: true,
       style: const TextStyle(color: Colors.white),
-      validator: (_input) {
-        return _input != null && _input.isNotEmpty
+      validator: (input) {
+        return input != null && input.isNotEmpty
             ? null
             : "Please enter a password";
       },
-      onSaved: (_input) {
-        if (_input != null) {
-          _password = _input;
+      onSaved: (input) {
+        if (input != null) {
+          _password = input;
         }
       },
       cursorColor: Colors.white,
